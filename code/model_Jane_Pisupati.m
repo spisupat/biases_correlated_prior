@@ -19,7 +19,7 @@ integrationTypes = {'perfect','imperfect'}; % Integration constraint - perfect i
 % Load data, empirical parameters
 try
 %     load('dataset_Smith_Jane.mat')% Across-subject across-session pooled data for duration discrimination task
-    load('dataset_Jane_Pisupati.mat')
+    load('/data/dataset_Jane_Pisupati.mat')
 catch
     fprintf('\nCannot find data directory..proceeding with simulated data\n')
 end
@@ -160,7 +160,7 @@ if plotSim
     end
 end
 
-saveas(gcf,'model_simulation.pdf')
+saveas(gcf,'/results/model_simulation.pdf')
 
 %% Joint fits to rodent data (if available - otherwise uses simulated data from above)
 
@@ -448,7 +448,7 @@ if plotFit
     
 end
 
-saveas(gcf,'model_fits.pdf')
+saveas(gcf,'/results/model_fits.pdf')
 
 %----------------------Plot factorial model comparison----------------------
 figure(3);clf;set(gcf,'color','w')
@@ -495,7 +495,7 @@ figure(3);clf;set(gcf,'color','w')
     title('AIC')
     set(gcf,'Units','inches');
 
-saveas(gcf,'model_comparison.pdf')
+saveas(gcf,'/results/model_comparison.pdf')
 
     
 %%
