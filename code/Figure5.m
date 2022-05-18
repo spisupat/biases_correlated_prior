@@ -1,9 +1,9 @@
 % Bayesian model simulations of sound discrimination for Read Lab
 % Sashank Pisupati 02/20/20
 
-
+function [fits] = Figure5(empirical_prior)
 %% Model specifications
-clear all
+%clear all
 plotSim = 1; % Plot simulations from ideal observer
 fitting = 1; % Fit rodent data
 plotFit = 1; % Plot data fits
@@ -19,7 +19,8 @@ integrationTypes = {'perfect','imperfect'}; % Integration constraint - perfect i
 % Load data, empirical parameters
 try
 %     load('dataset_Smith_Jane.mat')% Across-subject across-session pooled data for duration discrimination task
-    load('/data/dataset_Jane_Pisupati.mat')
+    D = load('/data/dataset_Jane_Pisupati.mat');
+    dataset = D.dataset;
 catch
     fprintf('\nCannot find data directory..proceeding with simulated data\n')
 end
@@ -70,7 +71,7 @@ lineWidth = 2;
 if plotSim
     
     % Plot empirical prior
-    jointPrior = getJointPrior(priorType);
+    jointPrior = getJointPrior(priorType,empirical_prior);
     figure(1);clf;set(gcf,'color','w')
     subplot(2,3,1)
     x = [0:50:2000];
@@ -199,7 +200,7 @@ if fitting
         for i = 1:length(tasks)
             task = tasks{i};
             priorType = priorTypes{p};
-            jointPrior = getJointPrior(priorType); % Empirical joint prior of durations & slopes
+            jointPrior = getJointPrior(priorType, empirical_prior); % Empirical joint prior of durations & slopes
             [s,prior] = getStim(task,jointPrior);
             rules.mu0 = s.mu0;
             allPriors{i} = prior;
@@ -321,7 +322,7 @@ if plotFit
     integrationType = fits(ind).integrationType;
     lapseType = fits(ind).lapseType;
     thetaEst = fits(ind).theta;
-    [jointPrior] = getJointPrior(priorType);
+    [jointPrior] = getJointPrior(priorType, empirical_prior);
     
     hfig = figure(2);clf;set(gcf,'color','w')
     
@@ -497,6 +498,7 @@ figure(3);clf;set(gcf,'color','w')
 
 saveas(gcf,'/results/figure_5_model_comparison.pdf')
 
+end
     
 %%
 % figure(4)%
@@ -624,20 +626,36 @@ end
 % 
 %-------------------Get empirical prior parameters------------------------
 
-function [jointPrior] = getJointPrior(priorType)
+function [jointPrior] = getJointPrior(priorType,empirical_prior)
+% Historical note: parameters used in manuscript - but recomputed below using Figure1.m
+% switch priorType
+%     case 'onset'
+%         % Onset slope
+%         jointPrior.Mu = [588.061224489794,38.4702570131941];
+%         jointPrior.Sigma = [60033.7331794379,-2266.66835833170;-2266.66835833170,589.187367361779];
+%     case 'offset'
+%         % Offset slope
+%         jointPrior.Mu = [588.061224489794,10.0838694529419];
+%         jointPrior.Sigma = [60033.7331794379,374.221800331715;374.221800331715,88.2037289566602];
+%     case 'both'
+%         % % Combined
+%         jointPrior.Mu = [587.102185380555,0.0100181039239024];
+%         jointPrior.Sigma = [60108.5861261626,0.0527685193360701;0.0527685193360701,2.14558631529986e-05];
+% end
+% Import empirical prior parameters from prior constructor script (Figure1.m)
 switch priorType
     case 'onset'
         % Onset slope
-        jointPrior.Mu = [588.061224489794,38.4702570131941];
-        jointPrior.Sigma = [60033.7331794379,-2266.66835833170;-2266.66835833170,589.187367361779];
+        jointPrior.Mu = empirical_prior(1,1).mu{:};
+        jointPrior.Sigma = empirical_prior(1,2).sigma2{:};
     case 'offset'
         % Offset slope
-        jointPrior.Mu = [588.061224489794,10.0838694529419];
-        jointPrior.Sigma = [60033.7331794379,374.221800331715;374.221800331715,88.2037289566602];
+        jointPrior.Mu = empirical_prior(2,1).mu{:};;
+        jointPrior.Sigma = empirical_prior(2,2).sigma2{:};
     case 'both'
         % % Combined
-        jointPrior.Mu = [587.102185380555,0.0100181039239024];
-        jointPrior.Sigma = [60108.5861261626,0.0527685193360701;0.0527685193360701,2.14558631529986e-05];
+        jointPrior.Mu = empirical_prior(3,1).mu{:};;
+        jointPrior.Sigma = empirical_prior(3,2).sigma2{:};
 end
 end
 

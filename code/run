@@ -2,7 +2,7 @@
 set -ex
 
 # This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
-matlab -nodisplay -nosplash -r "addpath(genpath('.'));[~,prior] = Figure1;disp(prior);save('/results/empirical_prior.mat', 'prior');run('Figure5.m');"
+matlab -nodisplay -nosplash -r "addpath(genpath('.'));[~,empirical_prior] = Figure1;disp(empirical_prior);save('/results/empirical_prior.mat', 'empirical_prior');run('Figure3.m');[fits] = Figure5(empirical_prior);save('/results/model_fits.mat', 'fits');run('Supplemental_Figure1.m');"
 
 # run('Figure3.m');run('Figure4.m');run('Figure5.m');run('Supplemental_Figure1.m');
 
