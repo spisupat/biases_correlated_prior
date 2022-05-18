@@ -60,7 +60,7 @@ lambdaSim = 0.25;                       % Generative lapse parameter
 
 tasks = {'plateauSlowOnOff','plateauSlowOnOff','plateauSlowOnOff','plateauFastOnOff','plateauFastOnOff','plateauFastOnOff'};
 holdTimes = {'200ms single','200ms multi','600ms','200ms single','200ms multi','600ms'};
-                colors = {[1 0.5 0.6],[1 0.5 0.6],[1 0.5 0.6],[0.2,0.6,1],[0.2,0.6,1],[0.2,0.6,1]};
+colors = flip({[0,0,142] ./ 255, [7,72,255] ./ 255, [95,177,255] ./ 255, [182,0,0] ./ 255,[255,7,45] ./ 255,[255,95,146] ./ 255});
 priorInds = [2,2,2,2,2,2];
 perfInds = [4,5,6,4,5,6];
 markerSize = 20;
@@ -98,7 +98,7 @@ if plotSim
         subplot(2,3,1)
         hold on
         plot(s.plateauDur,s.onOffFc,'o','MarkerFaceColor',colors{i},'color',colors{i},'MarkerSize',5)
-        ylabel('Onset-Offset Slope (log dB/s)')
+        ylabel('Onset-Offset Slope (A/s)')
         xlabel('Plateau duration (ms)')
         ylim([y(1),y(end)])
         xlim([x(1),x(end)])
@@ -448,7 +448,7 @@ if plotFit
     
 end
 
-saveas(gcf,'/results/model_fits.pdf')
+saveas(gcf,'/results/figure_5_model_fits.pdf')
 
 %----------------------Plot factorial model comparison----------------------
 figure(3);clf;set(gcf,'color','w')
@@ -495,7 +495,7 @@ figure(3);clf;set(gcf,'color','w')
     title('AIC')
     set(gcf,'Units','inches');
 
-saveas(gcf,'/results/model_comparison.pdf')
+saveas(gcf,'/results/figure_5_model_comparison.pdf')
 
     
 %%
@@ -640,40 +640,6 @@ switch priorType
         jointPrior.Sigma = [60108.5861261626,0.0527685193360701;0.0527685193360701,2.14558631529986e-05];
 end
 end
-%-------------------Get empirical prior parameters------------------------
-% function [jointPrior] = getJointPrior(priorType)
-% switch priorType
-%     case 'onset'
-%         % Onset slope
-%         jointPrior.Mu = [587.102185380555,0.0157359076605098];
-%         jointPrior.Sigma = [60108.5861261626,-0.252968562268931;-0.252968562268931,7.27095821023931e-05];
-%     case 'offset'
-%         % Offset slope
-%         jointPrior.Mu = [587.102185380555,0.00430030018729505];
-%         jointPrior.Sigma = [60108.5861261626,0.358505600941071;0.358505600941071,1.33108781733236e-05];
-%     case 'both'
-%         % % Combined
-%         jointPrior.Mu = [587.102185380555,0.0100181039239024];
-%         jointPrior.Sigma = [60108.5861261626,0.0527685193360701;0.0527685193360701,2.14558631529986e-05];
-% end
-% end
-% %-------------------Get empirical prior parameters------------------------
-% function [jointPrior] = getJointPrior(priorType)
-% switch priorType
-%     case 'onset'
-%         % Onset slope
-%         jointPrior.Mu = [524.968, 256.362];
-%         jointPrior.Sigma = [67835.527, -11540.471; -11540.471, 33853.425];
-%     case 'offset'
-%         % Offset slope
-%         jointPrior.Mu = [524.968, 83.869];
-%         jointPrior.Sigma = [67835.527, -21844.460; -21844.460, 48791.572];
-%     case 'both'
-%         % % Combined
-%         jointPrior.Mu = [524.968, 170.116];
-%         jointPrior.Sigma = [67835.527, -16692.465; -16692.465, 23162.182];
-% end
-% end
 
 %-----------------Constrain sigmas to be scaled by sqrt(tHold)-------------
 function [c,ceq] = integration_constraint(x)

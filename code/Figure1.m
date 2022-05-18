@@ -1,3 +1,4 @@
+function [h,prior] = Figure1()
 close all
 % clear
 
@@ -102,7 +103,7 @@ for i = 1:2
     set(gca,'YDir','normal')
     view(2)
     axis square
-    colormap(ax,brewermap([],'greys'))
+    colormap(ax,[[1:(-1/256):0]',[1:(-1/256):0]',[1:(-1/256):0]'])
     set(gca,'TickDir','out');
     ylim([0,225])
     ylabel('Slope (A/ms)')
@@ -139,7 +140,7 @@ Time = xf/Fs;
 spectrogram(ex_voc,128*15,120*15,128*15,Fs,'yaxis') % Spectrogram plot display
 hold on
 set(colorbar,'visible','on')  % Display color bar
-colormap(ax,brewermap([],'Greys'))
+colormap(ax,[[1:(-1/256):0]',[1:(-1/256):0]',[1:(-1/256):0]'])
 xticks([0:3])
 xlim([0 3])
 yticks([])
@@ -200,9 +201,11 @@ box off
 clearvars -except prior
 h=gcf;
 set(h,'PaperSize',[20 10]); %set the paper size to what you want  
-% print(h,'/results/figure_panel.pdf') % then print it
+%print(h,'/results/figure_panel.pdf') % then print it
 
-saveas(h,'/results/figure_panel.pdf')
+saveas(h,'/results/figure_1.pdf')
+end 
+
 
 function [condMu,condSigma] = condGauss(Mu,Sigma,a)
 
@@ -221,232 +224,3 @@ elseif length(Mu) == 3
 end
 
 end
-
-%%% function used for colormapping
-
-function [map,num,typ,scheme] = brewermap(N,scheme)
-% (c) 2014-2020 Stephen Cobeldick
-persistent scm
-%
-raw = bmColors();
-%
-err = 'First input must be a real positive scalar numeric or [] or NaN.';
-if nargin==0&&nargout==0
-	hdr = {   'Type'; 'Scheme'; 'Nodes'};
-	tsn = [{raw.typ};{raw.str};{raw.num}];
-	fprintf('%-12s %-9s %s\n',hdr{:});
-	fprintf('%-12s %-9s %u\n',tsn{:});
-	return
-elseif nargin==0 || isnumeric(N)&&isequal(N,[])
-	% Default is the same as MATLAB colormaps:
-	N = size(get(gcf,'colormap'),1);
-	if nargin<2
-		assert(~isempty(scm),'SC:colorbrewer:SchemeNotPreset',...
-			'Scheme must be preset before this call: BREWERMAP(SCHEME)')
-		scheme = scm;
-	end
-elseif nargin==1&&ischar(N)&&ndims(N)==2&&size(N,1)==1
-	if strcmpi(N,'list')
-		map = {raw.str};
-		num = [raw.num];
-		typ = {raw.typ};
-		return
-	end
-	scheme = N; % preset
-else
-	assert(isnumeric(N)&&isscalar(N),...
-		'SC:brewermap:NotScalarNumeric',err)
-	assert(isnan(N)||isreal(N)&&isfinite(N)&&fix(N)==N&&N>=0,...
-		'SC:brewermap:NotRealPositiveNotNaN',err)
-end
-%
-assert(ischar(scheme)&&ndims(scheme)==2&&size(scheme,1)==1,...
-	'SC:brewermap:NotCharacterVector',...
-	'Second input must be a character vector (the scheme name).')
-isr = strncmp(scheme,'*',1);
-ids = strcmpi(scheme(1+isr:end),{raw.str});
-assert(any(ids),'SC:brewermap:UnknownScheme','Unknown scheme name: %s',scheme)
-%
-num = raw(ids).num;
-typ = raw(ids).typ;
-%
-if ischar(N)
-	map = scm;
-	scm = N;
-	return
-elseif N==0
-	map = ones(0,3);
-	return
-elseif isnan(N)
-	N = num;
-end
-%
-% Downsample:
-[idx,itp] = bmIndex(N,num,typ);
-map= raw(ids).rgb(idx,:)/255;
-% Interpolate:
-if itp
-	M = [... sRGB to XYZ
-		0.4124564,0.3575761,0.1804375;...
-		0.2126729,0.7151522,0.0721750;...
-		0.0193339,0.1191920,0.9503041];
-	wpt = [0.95047,1,1.08883]; % D65
-	%
-	map = bmRGB2Lab(map,M,wpt); % optional
-	%
-	% Extrapolate a small amount beyond end nodes:
-	%ido = linspace(0,num+1,N+2);
-	%ido = ido(2:end-1);
-	% Interpolation completely within end nodes:
-	ido = linspace(1,num,N);
-	%
-	switch typ
-		case 'Diverging'
-			mid = ceil(num/2);
-			ida =   1:mid;
-			idz = mid:num;
-			map = [...
-				interp1(ida,map(ida,:),ido(ido<=mid),'pchip');...
-				interp1(idz,map(idz,:),ido(ido>mid),'pchip')];
-		case 'Sequential'
-			map = interp1(1:num,map,ido,'pchip');
-		otherwise
-			error('SC:brewermap:NoInterp','Cannot interpolate this type.')
-	end
-	%
-	map = bmLab2RGB(map,M,wpt); % optional
-end
-% Limit output range:
-map = max(0,min(1,map));
-% Reverse row order:
-if isr
-	map = map(end:-1:1,:);
-end
-%
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%brewermap
-function lab = bmRGB2Lab(rgb,M,wpt)
-% Convert a matrix of sRGB values to Lab.
-%applycform(rgb,makecform('srgb2lab','AdaptedWhitePoint',wpt))
-% RGB2XYZ:
-xyz = bmGammaInv(rgb) * M.';
-% Remember to include my license when copying my implementation.
-% XYZ2Lab:
-xyz = bsxfun(@rdivide,xyz,wpt);
-idx = xyz>(6/29)^3;
-F = idx.*(xyz.^(1/3)) + ~idx.*(xyz*(29/6)^2/3+4/29);
-lab(:,2:3) = bsxfun(@times,[500,200],F(:,1:2)-F(:,2:3));
-lab(:,1) = 116*F(:,2) - 16;
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmRGB2Lab
-function rgb = bmGammaInv(rgb)
-% Inverse gamma correction of sRGB data.
-idx = rgb <= 0.04045;
-rgb(idx) = rgb(idx) / 12.92;
-rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaInv
-function rgb = bmLab2RGB(lab,M,wpt)
-% Convert a matrix of Lab values to sRGB.
-%applycform(lab,makecform('lab2srgb','AdaptedWhitePoint',wpt))
-% Lab2XYZ
-tmp = bsxfun(@rdivide,lab(:,[2,1,3]),[500,Inf,-200]);
-tmp = bsxfun(@plus,tmp,(lab(:,1)+16)/116);
-idx = tmp>(6/29);
-tmp = idx.*(tmp.^3) + ~idx.*(3*(6/29)^2*(tmp-4/29));
-xyz = bsxfun(@times,tmp,wpt);
-% Remember to include my license when copying my implementation.
-% XYZ2RGB
-rgb = max(0,min(1, bmGammaCor(xyz / M.')));
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%cbLab2RGB
-function rgb = bmGammaCor(rgb)
-% Gamma correction of sRGB data.
-idx = rgb <= 0.0031308;
-rgb(idx) = 12.92 * rgb(idx);
-rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmGammaCor
-function [idx,itp] = bmIndex(N,num,typ)
-% Ensure exactly the same colors as the online ColorBrewer colorschemes.
-%
-itp = N>num;
-switch typ
-	case 'Qualitative'
-		itp = false;
-		idx = 1+mod(0:N-1,num);
-	case 'Diverging'
-		switch N
-			case 1 % extrapolated
-				idx = 8;
-			case 2 % extrapolated
-				idx = [4,12];
-			case 3
-				idx = [5,8,11];
-			case 4
-				idx = [3,6,10,13];
-			case 5
-				idx = [3,6,8,10,13];
-			case 6
-				idx = [2,5,7,9,11,14];
-			case 7
-				idx = [2,5,7,8,9,11,14];
-			case 8
-				idx = [2,4,6,7,9,10,12,14];
-			case 9
-				idx = [2,4,6,7,8,9,10,12,14];
-			case 10
-				idx = [1,2,4,6,7,9,10,12,14,15];
-			otherwise
-				idx = [1,2,4,6,7,8,9,10,12,14,15];
-		end
-	case 'Sequential'
-		switch N
-			case 1 % extrapolated
-				idx = 6;
-			case 2 % extrapolated
-				idx = [4,8];
-			case 3
-				idx = [3,6,9];
-			case 4
-				idx = [2,5,7,10];
-			case 5
-				idx = [2,5,7,9,11];
-			case 6
-				idx = [2,4,6,7,9,11];
-			case 7
-				idx = [2,4,6,7,8,10,12];
-			case 8
-				idx = [1,3,4,6,7,8,10,12];
-			otherwise
-				idx = [1,3,4,6,7,8,10,11,13];
-		end
-	otherwise
-		error('SC:brewermap:UnknownType','Unknown type string.')
-end
-%
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%bmIndex
-function raw = bmColors()
-% Return a structure of all colorschemes: name, scheme type, RGB values, number of nodes.
-% Order: first sort by <typ>, then case-insensitive sort by <str>:
-
-raw(23).str = 'Greys';
-raw(23).typ = 'Sequential';
-raw(23).rgb = [255,255,255;247,247,247;240,240,240;217,217,217;204,204,204;189,189,189;150,150,150;115,115,115;99,99,99;82,82,82;37,37,37;37,37,37;0,0,0];
-% number of nodes:
-for k = 1:numel(raw)
-	switch raw(k).typ
-		case 'Diverging'
-			raw(k).num = 11;
-		case 'Qualitative'
-			raw(k).num = size(raw(k).rgb,1);
-		case 'Sequential'
-			raw(k).num = 9;
-		otherwise
-			error('SC:brewermap:UnknownType','Unknown type string.')
-	end
-end
-%
-end
-
