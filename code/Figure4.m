@@ -1,7 +1,8 @@
 
 load('/data/BootstrapDataMat.mat')
 
-
+addpath('/code/Functions/Violin.m')
+addpath('/code/Functions/violinplot.m')
 x=[50:.5:300];
 
 

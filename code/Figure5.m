@@ -1,4 +1,4 @@
-% Bayesian model simulations of sound discrimination for Read Lab
+% Bayesian model simulations of sound discrimination & model-fitting code for Read Lab
 % Sashank Pisupati 02/20/20
 
 function [fits] = Figure5(empirical_prior)
@@ -381,8 +381,10 @@ if plotFit
             pChoice(j) = nHighResp(j)/nResp(j);
             % Get 95% Wilson binomial confidence intervals
             z = 1.96;
-            ciUpper(j) = (pChoice(j) + z^2/(2*nResp(j)) + z * sqrt(pChoice(j)*(1-pChoice(j))/nResp(j) + z^2/(4*nResp(j)^2))) / (1 + z^2/nResp(j));
-            ciLower(j) = (pChoice(j) + z^2/(2*nResp(j)) - z * sqrt(pChoice(j)*(1-pChoice(j))/nResp(j) + z^2/(4*nResp(j)^2))) / (1 + z^2/nResp(j));
+            ciUpper(j) = (pChoice(j) + z^2/(2*nResp(j)) + ...
+                z * sqrt(pChoice(j)*(1-pChoice(j))/nResp(j) + z^2/(4*nResp(j)^2))) / (1 + z^2/nResp(j));
+            ciLower(j) = (pChoice(j) + z^2/(2*nResp(j)) - ...
+                z * sqrt(pChoice(j)*(1-pChoice(j))/nResp(j) + z^2/(4*nResp(j)^2))) / (1 + z^2/nResp(j));
             % Plot confidence intervals
             plot([stim(j),stim(j)],[ciUpper(j),ciLower(j)],'color',colors{i});
         end
@@ -391,8 +393,10 @@ if plotFit
         
         % Plot 95% Wilson binomial confidence intervals
         z = 1.96;
-        ciUpper = (pChoice + z^2./(2*nResp) + z .* sqrt(pChoice.*(1-pChoice)./nResp + z^2./(4*nResp.^2))) ./ (1 + z^2./nResp);
-        ciLower = (pChoice + z^2./(2*nResp) - z .* sqrt(pChoice.*(1-pChoice)./nResp + z^2./(4*nResp.^2))) ./ (1 + z^2./nResp);
+        ciUpper = (pChoice + z^2./(2*nResp) + ...
+            z .* sqrt(pChoice.*(1-pChoice)./nResp + z^2./(4*nResp.^2))) ./ (1 + z^2./nResp);
+        ciLower = (pChoice + z^2./(2*nResp) - ...
+            z .* sqrt(pChoice.*(1-pChoice)./nResp + z^2./(4*nResp.^2))) ./ (1 + z^2./nResp);
         for j  = 1:length(stim)
             plot([stim(j),stim(j)],[ciUpper(j),ciLower(j)],'color',colors{i});
         end
@@ -499,27 +503,7 @@ figure(3);clf;set(gcf,'color','w')
 saveas(gcf,'/results/figure_5_model_comparison.pdf')
 
 end
-    
-%%
-% figure(4)%
-% zmax = 5000;
-% subplot(2,2,1)
-% imagesc(([bic([1,3]);bic([5,7])]))
-% caxis(log([1,zmax]))
-% colorbar
-% subplot(2,2,2)
-% imagesc(([bic([2,4]);bic([6,8])]))
-% caxis(log([1,zmax]))
-% colorbar
-% subplot(2,2,3)
-% imagesc(([aic([1,3]);aic([5,7])]))
-% caxis(log([1,zmax]))
-% colorbar
-% subplot(2,2,4)
-% imagesc(([aic([2,4]);aic([6,8])]))
-% colormap('pink')
-% caxis(log([1,zmax]))
-% colorbar
+
 %% Functions
 %--------------------------Get stimulus set used in task------------------
 function [stim,condPrior] = getStim(task,jointPrior)
@@ -527,18 +511,14 @@ switch task
     case 'plateauSlowOnOff'
         stim.plateauDur = [100,130,160,175,190,220,250]; %ms
         stim.mu0 = 175;
-%         stim.onOffFc = 255*ones(1,7); % dB/s
         stim.onOffFc = 83.7216437339341*ones(1,7); % dB/s
-%         stim.onOffFc = .01465129 * ones (1,7);
         stim.taskDim = 'plateauDur';
         [condPrior.mu,condPrior.sig] = getCondPrior(jointPrior.Mu, jointPrior.Sigma, 2, stim.onOffFc(1));
         
     case 'plateauFastOnOff'
         stim.plateauDur = [100,130,160,175,190,220,250]; %ms
         stim.mu0 = 175;
-%         stim.onOffFc = 1636*ones(1,7); % dB/s
         stim.onOffFc = 535.816943983612*ones(1,7); % dB/s
-%         stim.onOffFc = .09376797 * ones (1,7);
         stim.taskDim = 'plateauDur';
         [condPrior.mu,condPrior.sig] = getCondPrior(jointPrior.Mu, jointPrior.Sigma, 2, stim.onOffFc(1));
 end
@@ -627,7 +607,8 @@ end
 %-------------------Get empirical prior parameters------------------------
 
 function [jointPrior] = getJointPrior(priorType,empirical_prior)
-% Historical note: parameters used in manuscript - but recomputed below using Figure1.m
+
+% Reproducibility note: manuscript used parameters below - but code capsule recomputes them below using Figure1.m
 % switch priorType
 %     case 'onset'
 %         % Onset slope
@@ -642,6 +623,7 @@ function [jointPrior] = getJointPrior(priorType,empirical_prior)
 %         jointPrior.Mu = [587.102185380555,0.0100181039239024];
 %         jointPrior.Sigma = [60108.5861261626,0.0527685193360701;0.0527685193360701,2.14558631529986e-05];
 % end
+
 % Import empirical prior parameters from prior constructor script (Figure1.m)
 switch priorType
     case 'onset'
