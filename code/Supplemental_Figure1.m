@@ -96,7 +96,7 @@ for i=1:length(d20032.dataset.Jitter)
     elseif h>t3 &&  h<t4
         bursts(i) =1+ (h-t3)/(t4-t3);
     elseif h>t4 && h<1+t1
-        bursts(i) =2
+        bursts(i) =2;
     elseif h>1+t1
         bursts(i) =2+ (h-(1+t1))/((t2)-(t1));
     elseif h==NaN
@@ -235,7 +235,7 @@ ylim([0,2])
 
 
 
-h = gcf
+h = gcf;
 saveas(h,'/results/supp_figure_1.pdf')
 
 
