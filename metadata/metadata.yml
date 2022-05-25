@@ -1,33 +1,33 @@
 metadata_version: 1
-name: Dataset from "Correlations across timing cues in natural vocalizations predict
+name: Code from "Correlations across timing cues in natural vocalizations predict
   biases in judging synthetic sound burst durations."
-description: "Dataset from the Manuscript \"Correlations across timing cues in natural
-  vocalizations predict biases in judging synthetic sound burst durations.\"\n\nAbstract:
-  \nIt is well known that animals rely on multiple sources of information in order
-  to successfully identify sounds in natural environments, to make decisions that
-  are optimal for their survival. For example, rats use duration and pitch cues to
-  respond appropriately to prosocial and distress vocalizations (Saito et al. 2019).
-  Vocalization duration cues are known to co-vary with other temporal cues (Khatami
-  et al. 2018), yet little is known about whether animals rely upon such co-variations
-  to successfully discriminate sounds.  In the current study, we find natural alarm
-  vocalizations in rats have onset and offset slopes that are correlated with their
-  duration. Accordingly, vocalizations with faster onset slopes are more likely to
-  have shorter durations. Given that vocalization slopes begin and end within milliseconds,
-  they could provide rapid perceptual cues for predicting and discriminating vocalization
-  duration.  To examine this possibility, we train rodents to discriminate duration
-  differences in sequences of synthetic vocalizations and examine how artificially
-  changing the slope impacts duration judgments. We find animals are biased to misjudge
-  a range of synthetic vocalizations as being shorter in duration when the onset and
-  offset slopes are artificially fast. Moreover, this bias is reduced when rats are
-  exposed to multiple synthetic vocalization bursts.  The observed perceptual bias
-  is accurately captured by a Bayesian decision-theoretic model that utilizes the
-  empirical joint distribution of duration and onset slopes in natural vocalizations
-  as a prior during duration judgements of synthetic vocalizations.  The model also
-  explains why this bias is reduced when more evidence is accumulated across multiple
-  bursts, reducing the prior's influence  These results support the theory that animals
-  are sensitive to fine-grained statistical co-variations in auditory timing cues
-  and integrate this information optimally with incoming sensory evidence to guide
-  their decisions."
+description: "Code and compressed dataset from the Manuscript \"Correlations across
+  timing cues in natural vocalizations predict biases in judging synthetic sound burst
+  durations.\"\n\nAbstract: \nIt is well known that animals rely on multiple sources
+  of information in order to successfully identify sounds in natural environments,
+  to make decisions that are optimal for their survival. For example, rats use duration
+  and pitch cues to respond appropriately to prosocial and distress vocalizations
+  (Saito et al. 2019). Vocalization duration cues are known to co-vary with other
+  temporal cues (Khatami et al. 2018), yet little is known about whether animals rely
+  upon such co-variations to successfully discriminate sounds.  In the current study,
+  we find natural alarm vocalizations in rats have onset and offset slopes that are
+  correlated with their duration. Accordingly, vocalizations with faster onset slopes
+  are more likely to have shorter durations. Given that vocalization slopes begin
+  and end within milliseconds, they could provide rapid perceptual cues for predicting
+  and discriminating vocalization duration.  To examine this possibility, we train
+  rodents to discriminate duration differences in sequences of synthetic vocalizations
+  and examine how artificially changing the slope impacts duration judgments. We find
+  animals are biased to misjudge a range of synthetic vocalizations as being shorter
+  in duration when the onset and offset slopes are artificially fast. Moreover, this
+  bias is reduced when rats are exposed to multiple synthetic vocalization bursts. 
+  The observed perceptual bias is accurately captured by a Bayesian decision-theoretic
+  model that utilizes the empirical joint distribution of duration and onset slopes
+  in natural vocalizations as a prior during duration judgements of synthetic vocalizations. 
+  The model also explains why this bias is reduced when more evidence is accumulated
+  across multiple bursts, reducing the prior's influence  These results support the
+  theory that animals are sensitive to fine-grained statistical co-variations in auditory
+  timing cues and integrate this information optimally with incoming sensory evidence
+  to guide their decisions."
 authors:
 - name: Matthew Jané
   affiliations:
@@ -39,6 +39,21 @@ authors:
   affiliations:
   - name: University of Connecticut
 - name: Luan Castro-Tonelli
+  affiliations:
+  - name: University of Connecticut
+- name: Liana Melo-Thomas
+  affiliations:
+  - name: Philipps-Universität Marburg
+- name: Rainer K.W. Schwarting
+  affiliations:
+  - name: Philipps-Universität Marburg
+- name: Markus Wohr
+  affiliations:
+  - name: Philipps-Universität Marburg
+- name: James J. Chrobak
+  affiliations:
+  - name: University of Connecticut
+- name: Heather L. Read
   affiliations:
   - name: University of Connecticut
 corresponding_contributor:
